@@ -16,18 +16,23 @@ for dirpath, dirnames, filenames in os.walk("pvacseq/example_data"):
 setup(
     name="pvacseq",
     version="3.0.5",
-    packages=["pvacseq", "pvacseq.lib"],
+    packages=["pvacseq", "pvacseq.lib", "pvacseq.server"],
     entry_points={
         "console_scripts":[
-            "pvacseq = pvacseq.pvacseq:main"
+            "pvacseq = pvacseq.pvacseq:main",
+            "pvacseq-ui = pvacseq.server.app:main [UI]"
         ]
     },
     install_requires=[
         'PyVCF',
         'requests',
     ],
+    extras_require={
+        'UI': ['connexion']
+    },
     package_data={
-        'pvacseq' : data_files + ['VEP_plugins/*', 'iedb_alleles/*']
+        'pvacseq' : data_files + ['VEP_plugins/*', 'iedb_alleles/*'],
+        'pvacseq.server': ['LICENSE', 'README.md']
     },
     classifiers=[
         'Development Status :: 4 - Beta',
