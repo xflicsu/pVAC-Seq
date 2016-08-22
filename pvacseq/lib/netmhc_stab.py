@@ -97,7 +97,7 @@ def main(args_input = sys.argv[1:]):
                         'Half Life':data[5],
                         'Stability Rank':data[6]
                     })
-                    pending.append([int(data[3]), {k:line[k] for k in line}])
+                    pending.append([int(data[3], 16), {k:line[k] for k in line}])
         writer.writerows([{k:entry[1][k] for k in entry[1]} for entry in sorted(pending, key=lambda x:x[0])])
     sys.stdout.write('\b\b')
     print("OK")

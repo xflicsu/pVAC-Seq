@@ -33,7 +33,6 @@ class Pipeline(metaclass=ABCMeta):
         self.expn_val                = kwargs['expn_val']
         self.fasta_size              = kwargs['fasta_size']
         self.keep_tmp_files          = kwargs['keep_tmp_files']
-        self.pipe                    = kwargs['_pipe']
         tmp_dir = os.path.join(self.output_dir, 'tmp')
         os.makedirs(tmp_dir, exist_ok=True)
         self.tmp_dir = tmp_dir
@@ -44,7 +43,7 @@ class Pipeline(metaclass=ABCMeta):
 
     def convert_vcf(self):
         print("Converting VCF to TSV")
-
+        sys.stdout.flush()
         convert_params = [
             self.input_file,
             self.tsv_file_path(),
@@ -55,7 +54,6 @@ class Pipeline(metaclass=ABCMeta):
             convert_params.extend(['-i', self.transcript_expn_file])
         lib.convert_vcf.main(convert_params)
         print("Completed")
-        sys.stdout.flush()
 
     def fasta_file_path(self):
         fasta_file = self.sample_name + "_" + str(self.peptide_sequence_length) + ".fa"
@@ -63,14 +61,13 @@ class Pipeline(metaclass=ABCMeta):
 
     def generate_fasta(self):
         print("Generating Variant Peptide FASTA File")
-
+        sys.stdout.flush()
         lib.generate_fasta.main([
             self.tsv_file_path(),
             str(self.peptide_sequence_length),
             self.fasta_file_path()
         ])
         print("Completed")
-        sys.stdout.flush()
 
     def split_fasta_basename(self):
         return os.path.join(self.tmp_dir, self.sample_name + "_" + str(self.peptide_sequence_length) + ".fa.split")
@@ -107,7 +104,6 @@ class Pipeline(metaclass=ABCMeta):
                     split_fasta_key_file_path,
                 ])
                 print("Completed")
-                sys.stdout.flush()
             chunks.append("%d-%d" % (split_start, split_end))
             split_start += self.fasta_size
         split_reader.close()
@@ -123,20 +119,19 @@ class Pipeline(metaclass=ABCMeta):
 
     def combined_parsed_outputs(self, split_parsed_output_files):
         print("Combining Parsed IEDB Output Files")
-
+        sys.stdout.flush()
         lib.combine_parsed_outputs.main([
             *split_parsed_output_files,
             self.combined_parsed_path()
         ])
         print("Completed")
-        sys.stdout.flush()
 
     def binding_filter_out_path(self):
         return os.path.join(self.output_dir, self.sample_name+".filtered.binding.tsv")
 
     def binding_filter(self):
         print("Running Binding Filters")
-
+        sys.stdout.flush()
         lib.binding_filter.main(
             [
                 self.combined_parsed_path(),
@@ -147,28 +142,26 @@ class Pipeline(metaclass=ABCMeta):
             ]
         )
         print("Completed")
-        sys.stdout.flush()
 
     def coverage_filter_out_path(self):
         return os.path.join(self.output_dir, self.sample_name+".filtered.coverage.tsv")
 
     def coverage_filter(self):
         print("Running Coverage Filters")
-
+        sys.stdout.flush()
         lib.coverage_filter.main([
             self.binding_filter_out_path(),
             self.coverage_filter_out_path(),
             '--expn-val', str(self.expn_val),
         ])
         print("Completed")
-        sys.stdout.flush()
 
     def net_chop_out_path(self):
         return os.path.join(self.output_dir, self.sample_name+".chop.tsv")
 
     def net_chop(self):
         print("Submitting remaining epitopes to NetChop")
-
+        sys.stdout.flush()
         lib.net_chop.main([
             self.coverage_filter_out_path(),
             self.net_chop_out_path(),
@@ -178,20 +171,18 @@ class Pipeline(metaclass=ABCMeta):
             str(self.net_chop_threshold)
         ])
         print("Completed")
-        sys.stdout.flush()
 
     def netmhc_stab_out_path(self):
         return os.path.join(self.output_dir, self.sample_name+".stab.tsv")
 
     def call_netmhc_stab(self):
         print("Running NetMHCStabPan")
-
+        sys.stdout.flush()
         lib.netmhc_stab.main([
             self.net_chop_out_path(),
             self.netmhc_stab_out_path(),
         ])
         print("Completed")
-        sys.stdout.flush()
 
     def final_path(self):
         return os.path.join(self.output_dir, self.sample_name+".final.tsv")
@@ -309,7 +300,6 @@ class MHCIPipeline(Pipeline):
                             params.append('-t')
                         lib.parse_output.main(params)
                         print("Completed")
-                        sys.stdout.flush()
                         split_parsed_output_files.append(split_parsed_file_path)
         return split_parsed_output_files
 
@@ -370,7 +360,6 @@ class MHCIIPipeline(Pipeline):
                         params.append('-t')
                     lib.parse_output.main(params)
                     print("Completed")
-                    sys.stdout.flush()
                     split_parsed_output_files.append(split_parsed_file_path)
 
         return split_parsed_output_files

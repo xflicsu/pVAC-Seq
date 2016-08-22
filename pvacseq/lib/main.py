@@ -14,7 +14,7 @@ from lib.prediction_class import *
 from lib.pipeline import *
 import shutil
 
-def main(args_input = sys.argv[1:], pipe = None):
+def main(args_input = sys.argv[1:]):
     parser = argparse.ArgumentParser("pvacseq run")
 
     parser.add_argument(
