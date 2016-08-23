@@ -12,6 +12,10 @@ data_files = []
 for dirpath, dirnames, filenames in os.walk("pvacseq/example_data"):
     for filename in filenames:
         data_files.append(os.path.join('..', dirpath, filename))
+for dirpath, dirnames, filenames in os.walk("pvacseq/example_data"):
+    for filename in filenames:
+        if not (filename.endswith(".py") or filename.endswith(".pyc")):
+            data_files.append(os.path.join('..', dirpath, filename))
 
 setup(
     name="pvacseq",
