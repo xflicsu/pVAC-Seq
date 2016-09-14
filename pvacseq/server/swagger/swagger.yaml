@@ -152,11 +152,6 @@ paths:
         description: "Prediction Algorithms: A comma-separated list of prediction algorithms to use"
         required: true
         type: "string"
-      - name: "output"
-        in: "formData"
-        description: "Output Directory: The directory to which output will be written"
-        required: true
-        type: "string"
       - name: "peptide_sequence_length"
         in: "formData"
         description: "Peptide Sequence Length: Length of the peptide sequences to produce in the FASTA"
@@ -265,17 +260,17 @@ paths:
         description: "Alleles: A comma-separated list of alleles to run the sequences against"
         required: true
         type: "string"
+      - name: "prediction_algorithms"
+        in: "formData"
+        description: "Prediction Algorithm: A comma-separated list of prediction algorithms to use"
+        required: true
+        type: "string"
       - name: "epitope_lengths"
         in: "formData"
         description: "Epitope Lengths: A comma-separated list of epitope lengths to produce"
         required: false
         type: "string"
         default: "10"
-      - name: "prediction_algorithms"
-        in: "formData"
-        description: "Prediction Algorithm: A comma-separated list of prediction algorithms to use"
-        required: true
-        type: "string"
       - name: "peptide_sequence_length"
         in: "formData"
         description: "Peptide Sequence Length: Length of the peptide sequences to produce in the FASTA"
